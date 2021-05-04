@@ -3,7 +3,7 @@ const fs = require('fs');
 // Imports the Google Cloud client library
 const speech = require('@google-cloud/speech');
 
-function quickstart(file){
+function quickstart(file, res){
   // Creates a client
   const client = new speech.SpeechClient();
 
@@ -28,12 +28,13 @@ function quickstart(file){
     .streamingRecognize(request)
     .on('error', console.error)
     .on('data', data => {
-      return data
+      res(data.results[0].alternatives[0].transcript);
+      return;
     });
 
   // Stream an audio file from disk to the Speech API, e.g. "./resources/audio.raw"
   fs.createReadStream(file).pipe(recognizeStream);
 }
 module.exports = {
-    speech: (file) => {return quickstart(file)}
+    speech: (res, file) => { quickstart(file, res);}
 }
