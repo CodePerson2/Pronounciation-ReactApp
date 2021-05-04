@@ -8,9 +8,9 @@
 
 I created a simple react front end in typescript to interact with the node server
 
-The project did not become completed. I did not relize that there was an assignment for this interview
+The project did not get completed. I didn't relize that there was an assignment for this interview
 until the moring of may the 3rd. This gave me little time to complete the assignment, having other duties
-that day.
+that day. I tried my best though 😁.
 
 #### What I did complete.
 
