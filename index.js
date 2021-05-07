@@ -39,20 +39,9 @@ app.get("/", (req, res) => {
 var server = http.createServer(app).listen(port);
 var io = require("socket.io")(server);
 
+
 io.on("connection", function (socket) {
   socket.on("audio", function (data) {
-    fs.appendFile("audio.mp3", data.file, (err) => {
-      if (err) console.log(err);
-      const outPath = linear16("audio.mp3", "audio.wav");
-      outPath.then(() => {
-        var resp = new Promise((res, rej) => {
-          speech.speech(res, path.resolve(__dirname, "audio.wav"));
-        });
-        resp.then((text) => {
-          console.log(text);
-          socket.emit("audioText", { file: text });
-        });
-      });
-    });
+    speech.handler(socket, data);
   });
 });
