@@ -25,23 +25,22 @@ function speechToText(file, res) {
     interimResults: false, // If you want interim results, set this to true
   };
 
+
   // Stream the audio to the Google Cloud Speech API
   const recognizeStream = client
     .streamingRecognize(request)
-    .on("error", console.error)
+    .on("error", (c) => {
+      c.error;
+      console.log(c);
+      fs.unlink(path.resolve(file), () => {});
+    })
     .on("end", () => {
-        fs.unlink(
-            path.resolve(file),
-            () => {}
-          );
+      res({success: 0});
+      fs.unlink(path.resolve(file), () => {});
     })
     .on("data", (data) => {
-      res(data.results[0].alternatives[0].transcript);
-      fs.unlink(
-        path.resolve(file),
-        () => {}
-      );
-      return;
+      res({success: 1, transcript: data.results[0].alternatives[0].transcript});
+      fs.unlink(path.resolve(file), () => {});
     });
 
   // Stream an audio file from disk to the Speech API, e.g. "./resources/audio.raw"
@@ -86,13 +85,13 @@ module.exports = {
                   res
                 );
               });
-              resp.then((text) => {
-                socket.emit("audioText", { file: text });
+              resp.then((data) => {
+                socket.emit("audioText", { file: data });
               });
             });
             outPath.catch((err) => {
-                console.log(err);
-            })
+              console.log(err);
+            });
           } catch {
             console.log("Linear16 error");
           }
